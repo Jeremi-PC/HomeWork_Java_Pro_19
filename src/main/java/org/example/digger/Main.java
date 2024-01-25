@@ -1,4 +1,4 @@
-package org.example.popkov;
+package org.example.digger;
 //1 уровень сложности: 1 Создайте класс Траншея. У траншеи есть целевая
 // длина и текущая длина. Создайте класс Землекоп, объекты которого копают
 // траншею (увеличивают текущую длину), пока не будет достигнута целевая длина.
@@ -18,6 +18,37 @@ package org.example.popkov;
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("Hello world!");
+        Digger digger1 = new Digger(new Trench(), "Digger1");
+        Digger digger2 = new Digger(new Trench(), "Digger2");
+        Digger digger3 = new Digger(new Trench(), "Digger2");
+        Thread thread1 = new Thread(digger1);
+        Thread thread2 = new Thread(digger2);
+        Thread thread3 = new Thread(digger3);
+
+        long startTime = System.nanoTime();
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1_000_000;
+        System.out.println("Время выполнения: " + duration + " мс");
+        /*---------------*/
+        Trench.givenLength = 10; // удваиваем длину траншеи т.к. копает один
+        startTime = System.nanoTime();
+        thread3.start();
+        try {
+            thread3.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        endTime = System.nanoTime();
+        duration = (endTime - startTime) / 1_000_000;
+        System.out.println("Время выполнения: " + duration + " мс");
     }
 }
