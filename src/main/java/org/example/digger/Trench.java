@@ -10,7 +10,7 @@ public class Trench {
 
     public synchronized int dig() {
         if (length <= 0) {
-            System.out.println("trench complitly dug");
+            System.out.println("trench completly dug");
             return 0;
         }
         length--;
