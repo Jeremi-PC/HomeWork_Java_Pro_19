@@ -1,4 +1,4 @@
-package org.example.digger;
+package org.example.digger.diggerClasses;
 
 
 public class Trench {
