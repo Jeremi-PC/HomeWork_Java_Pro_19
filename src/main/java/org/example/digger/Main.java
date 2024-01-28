@@ -1,5 +1,5 @@
 package org.example.digger;
-//1 уровень сложности: 1 Создайте класс Траншея. У траншеи есть целевая
+// 1 уровень сложности: 1 Создайте класс Траншея. У траншеи есть целевая
 // длина и текущая длина. Создайте класс Землекоп, объекты которого копают
 // траншею (увеличивают текущую длину), пока не будет достигнута целевая длина.
 // Каждый землекоп может прокопать 1 м траншеи, а затем он отдыхает 10 секунд.
@@ -18,37 +18,58 @@ package org.example.digger;
 public class Main {
     public static void main(String[] args) {
 
-        Digger digger1 = new Digger(new Trench(), "Digger1");
-        Digger digger2 = new Digger(new Trench(), "Digger2");
-        Digger digger3 = new Digger(new Trench(), "Digger2");
-        Thread thread1 = new Thread(digger1);
-        Thread thread2 = new Thread(digger2);
-        Thread thread3 = new Thread(digger3);
+        Trench trench = new Trench(5);
+        Trench trench1 = new Trench(5);
+        Runnable digging = () -> {
+            String name = Thread.currentThread().getName();
+            while (trench.dig() > 0) {
+                System.out.println(name + " dug 1 meter");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
 
-        long startTime = System.nanoTime();
-        thread1.start();
-        thread2.start();
+        Thread digger1 = new Thread(digging, "Digger1");
+        Thread digger2 = new Thread(digging, "Digger2");
 
+        Thread digger3 = new Thread(() -> {
+            String name = Thread.currentThread().getName();
+            while (trench1.dig() > 0) {
+                System.out.println(name + " dug 1 meter");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }, "digger3");
+
+        long startTime = System.currentTimeMillis();
+        digger1.start();
+        digger2.start();
         try {
-            thread1.join();
-            thread2.join();
+            digger1.join();
+            digger2.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1_000_000;
-        System.out.println("Время выполнения: " + duration + " мс");
-        /*---------------*/
-        Trench.givenLength = 10; // удваиваем длину траншеи т.к. копает один
-        startTime = System.nanoTime();
-        thread3.start();
+
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
+        System.out.println(executionTime);
+
+        startTime = System.currentTimeMillis();
+        digger3.start();
         try {
-            thread3.join();
+            digger3.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        endTime = System.nanoTime();
-        duration = (endTime - startTime) / 1_000_000;
-        System.out.println("Время выполнения: " + duration + " мс");
+        endTime = System.currentTimeMillis();
+        executionTime = endTime - startTime;
+        System.out.println(executionTime);
     }
 }

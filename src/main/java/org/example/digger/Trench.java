@@ -2,18 +2,20 @@ package org.example.digger;
 
 
 public class Trench {
-    static int givenLength = 5;
-    protected int currentLength = 0;
+    int length;
 
-    public Trench() {
+    public Trench(int length) {
+        this.length = length;
     }
 
-    public int getCurrentLength() {
-        return currentLength;
-    }
-
-    public void setCurrentLength(int currentLength) {
-        this.currentLength = currentLength;
+    public synchronized int dig() {
+        if (length <= 0) {
+            System.out.println("trench dug");
+            return 0;
+        }
+        length--;
+        System.out.println("trench dug 1 meter more");
+        return 1;
     }
 }
 
