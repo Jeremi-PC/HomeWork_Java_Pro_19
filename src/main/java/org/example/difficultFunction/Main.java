@@ -17,13 +17,14 @@ public class Main {
         System.out.println("Pls input number of elements for compute log(n): ");
         int nums = sc.nextInt();
         long startTime = System.currentTimeMillis();
-        CustomFunction.computeDecimalLogs(1, nums);
+      //  CustomFunction.computeDecimalLogs(1, nums);
+        CustomFunction.calculateFactorialsInRange(1, nums);
         long endTime = System.currentTimeMillis();
         long executeTime = endTime - startTime;
         System.out.println(executeTime);
-    //    System.out.println(CustomFunction.computeDecimalLogs(1, nums));
+        //    System.out.println(CustomFunction.computeDecimalLogs(1, nums));
 
-                // I had OutOfMemory exception on 30M elements
+        // I had OutOfMemory exception on 30M elements
         /*------------------------------------------------------*/
         int numThreads = Runtime.getRuntime().availableProcessors();
         System.out.println(Arrays.toString(divideNToThreads(nums, numThreads)));
@@ -31,25 +32,34 @@ public class Main {
         int[] arrOfParts = divideNToThreads(nums, numThreads);
         double onePart = (double) nums / numThreads;
         Map<Integer, Double> result = new HashMap<>();
+        List<Thread> threads = new ArrayList<>();
 
         startTime = System.currentTimeMillis();
         for (int el : arrOfParts) {
             Thread thread = new Thread(() -> {
-                Map<Integer, Double> part = CustomFunction.computeDecimalLogs(el - (int) onePart + 1, el);
+           //   Map<Integer, Double> part = CustomFunction.computeDecimalLogs(el - (int) onePart + 1, el);
+               Map<Integer, Double> part = CustomFunction.calculateFactorialsInRange(el - (int) onePart + 1, el);
+
                 result.putAll(part);
+
             });
             thread.start();
+            threads.add(thread);
+        }
+        for (Thread th : threads) {
             try {
-                thread.join();
+                th.join();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
+
         endTime = System.currentTimeMillis();
         executeTime = endTime - startTime;
         System.out.println(executeTime);
 // The time obtained with multithreading was longer - about twice.
-   //     System.out.println(result);
+// With trying compute factorial method I had a big difference in time for multithreading
+        //     System.out.println(result);
     }
 
     public static int[] divideNToThreads(int n, int numThreads) {
